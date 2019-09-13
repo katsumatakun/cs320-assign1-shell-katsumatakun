@@ -20,7 +20,6 @@ int main() {
         exit(1);
       }
       int rc = fork();
-      // printf("%d\n",rc );
       if (rc < 0) {
       // fork failed
       fprintf(stderr, "fork failed\n");
@@ -28,29 +27,46 @@ int main() {
       }
       else if (rc == 0) { // child (new process)
         char path[] = "/bin/";
-        printf("buffer: %lu \n",strlen(buffer));
-        printf("path: %s \n",path);
+        char *args[20];
+        int num = 0;
+        char*p = strtok(buffer, " ");
+        while (p)
+        {
+          // printf("%s\n", p);
+          // printf("%lu\n",strlen(p));
+          if(p[strlen(p)-1] == '\n'){
+           p[strlen(p)-1]  = '\0';
+         }
+           args[num] = p;
+           // printf("new len %lu\n",strlen(args[num]));
+           p = strtok(NULL, " ");
+           num++;
+        }
+        args[num] = NULL;
+        // printf("what is the program name length?%lu\n", strlen(args[0]));
+        // printf("is second null? %d\n",args[1]==NULL);
+        // printf("program: %s \n",args[0]);
         int len_bin = strlen(path);
-        int len_buf = strlen(buffer);
-        char* loc = malloc(len_bin+len_buf-1);
+        int len_pro = strlen(args[0]);
+        // printf("lenpro %d\n", len_pro);
+        char* loc = malloc(len_bin+len_pro);
 
         for (int i=0; i< len_bin; i++){
           loc[i] = path[i];
         }
-        printf("%s\n",loc );
         int count = 0;
-        while(buffer[count] != '\0')
+        while(args[0][count] != '\0')
         {
-          printf("%d\n", count+len_bin);
-          loc[len_bin+count] = buffer[count];
+          loc[len_bin+count] = args[0][count];
           count++;
         }
-        loc[len_bin+len_buf-1] = '\0';
-        char *args[2];
-
+        loc[len_bin+len_pro] = '\0';
         args[0] = loc;
-        args[1] = NULL;
-        // printf("%d\n",strcmp(loc,"/bin/ps");
+        // printf("loc: %s\n",loc );
+        // printf("loc size: %lu\n",strlen(loc) );
+        //
+        // printf("%d\n",strcmp(loc,"/bin/ps"));
+
         int rv = execv(args[0], args);
         printf("program not found \n");
       exit(1);
