@@ -4,12 +4,21 @@
 #include <sys/wait.h>
 #include <string.h>
 int main() {
-
-    while(1){
+   int nonexit = 1;
+    while(nonexit){
       char command[255];
       printf("$: ");
       char* buffer; long unsigned int len;
       int read = getline(&buffer, &len, stdin);
+      // printf("%d\n", buffer[0]=='e');
+      // printf("%d\n", buffer[1]=='x');
+      // printf("%d\n", buffer[2]=='i');
+      // printf("%d\n", buffer[3]=='t');
+      // printf("%d\n", buffer[4]=='\n');
+      if(strcmp("exit\n",buffer) == 0){
+        nonexit = 1;
+        exit(1);
+      }
       int rc = fork();
       // printf("%d\n",rc );
       if (rc < 0) {
