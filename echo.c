@@ -5,7 +5,7 @@
 int main() {
 
     while(1){
-      char command[20];
+      char command[255];
       printf("$: ");
       scanf("%s", command);
       int rc = fork();
