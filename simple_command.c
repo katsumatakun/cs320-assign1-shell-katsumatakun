@@ -7,7 +7,11 @@
 int history(char**,int);
 
 int main() {
-   char fullpath[] = "/bin/;/home/cs320//bin/";
+   char fullpath[] = "/bin/;/home/cs320/bin/";
+   char* path_array[20];
+   path_array[0] = "/bin/";
+   path_array[1] = "/home/cs320/bin/";
+   int num_path = 2;
    int nonexit = 1;
    int command_count = 0;
    char* command_ary[20];
@@ -57,7 +61,8 @@ int main() {
         exit(1);
         }
         else if (rc == 0) { // child (new process)
-          char path[] = "/bin/";
+
+          // char path[] = "/bin/";
           char *args[20];
           int num = 0;
           printf("most recent command %s\n", command_ary[(command_count-1)%20]);
@@ -75,45 +80,50 @@ int main() {
              num++;
           }
           args[num] = NULL;
+          int len_pro = strlen(args[0]);
           // printf("what is the program name length?%lu\n", strlen(args[0]));
           // printf("is second null? %d\n",args[1]==NULL);
           // printf("program: %s \n",args[0]);
-          int len_bin = strlen(path);
-          int len_pro = strlen(args[0]);
-          // printf("lenpro %d\n", len_pro);
-          char* loc = malloc(len_bin+len_pro);
+          for (int x=0; x<num_path; x++){
+            int len_bin = strlen(path_array[x]);
+            // printf("lenpro %d\n", len_pro);
+            char* loc = malloc(len_bin+len_pro);
 
-          for (int i=0; i< len_bin; i++){
-            loc[i] = path[i];
+            printf("len loc %d\n",len_bin+len_pro );
+            for (int i=0; i< len_bin; i++){
+              loc[i] = path_array[x][i];
+            }
+            int count = 0;
+            printf("args %s\n", args[0]);
+            printf("len %ld\n",strlen(args[0]));
+            while(args[0][count] != '\0')
+            {
+              loc[len_bin+count] = args[0][count];
+              count++;
+            }
+            loc[len_bin+len_pro] = '\0';
+            if (strcmp("getPATH",args[0]) == 0){
+              printf("%s\n", fullpath);
+            }
+            else if(strcmp("setPATH",args[0]) == 0){
+            }
+            else{
+            printf("loc: %s\n",loc );
+            // printf("loc size: %lu\n",strlen(loc) );
+            // printf("%d\n",strcmp(loc,""));
+            // args[0] = loc;
+            int rv = execv(loc, args);
+            free(loc);
           }
-          int count = 0;
-          while(args[0][count] != '\0')
-          {
-            loc[len_bin+count] = args[0][count];
-            count++;
           }
-          loc[len_bin+len_pro] = '\0';
-          if (strcmp("getPATH",args[0]) == 0){
-            printf("%s\n", fullpath);
-          }
-          else if(strcmp("setPATH",args[0]) == 0){
-          }
-          else{
-          // printf("loc: %s\n",loc );
-          // printf("loc size: %lu\n",strlen(loc) );
-          // printf("%d\n",strcmp(loc,""));
-          args[0] = loc;
-          int rv = execv(args[0], args);
           printf("program not found \n");
-         }
-         exit(1);
+          exit(1);
         }
-
         else {
         // parent goes down this path (main)
         wait(NULL);
         printf("parent finished\n");
-        }
+      }
      }
   }
 return 0;
