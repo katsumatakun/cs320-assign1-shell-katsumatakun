@@ -107,6 +107,10 @@ int main() {
             }
             else if(strcmp("setPATH",args[0]) == 0){
             }
+            else if(!strcmp("lls",args[0])){
+              int rv = execv("./lls", args);
+              free(loc);
+            }
             else{
             printf("loc: %s\n",loc );
             // printf("loc size: %lu\n",strlen(loc) );
